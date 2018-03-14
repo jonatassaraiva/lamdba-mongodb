@@ -1,0 +1,41 @@
+service: microservice-todo
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: us-east-1
+  stage: v1
+  deploymentBucket: ${env:DEPLOYMENT_BUCKET}
+
+functions:
+  microservice:
+    name: microservice-todo-${self:provider.stage}
+    description: Microservice to todos
+    handler: handler.microservice
+    events:
+      - http:
+          method: POST
+          path: todos
+          cors: true
+      - http:
+          method: GET
+          path: todos
+          cors: true
+    environment:
+      MONGODB_CONNECTION_STRING: ${env:MONGODB_CONNECTION_STRING}
+
+custom:
+  stage: "${opt:stage, self:provider.stage}"
+
+resources:
+  Resources:
+    ApiGatewayRestApi:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        Name: ${self:service}-${self:custom.stage}
+
+package:
+  exclude:
+    - .env
+    - .vscode/**
+    - scripts/**
