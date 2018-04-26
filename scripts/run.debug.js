@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING);
 
 const apiServer = require('../src/api');
-const port = 3000;
+const port = 3002;
 
 apiServer.listen(port, () => {
   /* eslint-disable no-console */
